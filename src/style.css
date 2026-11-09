@@ -262,3 +262,14 @@ nav.tabs button.active span { filter: none; opacity: 1; }
   background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 600; z-index: 20;
 }
 .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+/* guided missions & phrasebook */
+.task { font-size: 15px; font-weight: 600; background: var(--accent-soft); border-radius: 10px; padding: 8px 12px; }
+.step-no { font-size: 12px; color: var(--accent); font-weight: 700; }
+.chat-wrap { padding-bottom: 190px; }
+.feedback { align-self: flex-end; max-width: 90%; border-radius: 12px; padding: 8px 12px; font-size: 15px; }
+.feedback.ok { background: var(--ok-soft); align-self: stretch; max-width: none; }
+.btn.wide { width: 100%; }
+.chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+input[type="search"] { width: 100%; border: 1px solid var(--line); background: var(--card); border-radius: 12px; padding: 12px 14px; font-size: 17px; outline: none; -webkit-appearance: none; }
+.example { padding: 6px 0; }

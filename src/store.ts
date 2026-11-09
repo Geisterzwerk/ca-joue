@@ -1,8 +1,6 @@
 // Local persistence (localStorage). Everything stays on the device.
 import { STARTER_EXPRESSIONS } from "./content";
 
-export type ModelId = "claude-opus-5-5" | "claude-sonnet-5-5" | "claude-haiku-5-5";
-
 export interface Expression {
   id: string;
   fr: string;
@@ -26,8 +24,7 @@ export interface DailyPhrase {
 export interface State {
   version: 1;
   settings: {
-    apiKey: string;
-    model: ModelId;
+    onboarded: boolean;
     name: string;
     partnerName: string;
     canton: string;
@@ -39,7 +36,6 @@ export interface State {
   sessionsDone: number;
   expressions: Expression[];
   daily: DailyPhrase | null;
-  usage: { inputTokens: number; outputTokens: number; costUsd: number };
 }
 
 const KEY = "cajoue-state-v1";
@@ -68,7 +64,7 @@ function fresh(): State {
   const t = today();
   return {
     version: 1,
-    settings: { apiKey: "", model: "claude-opus-5-5", name: "", partnerName: "", canton: "VD", autoSpeak: false, rate: 0.9 },
+    settings: { onboarded: false, name: "", partnerName: "", canton: "VD", autoSpeak: false, rate: 0.9 },
     missions: {},
     activeDays: [],
     sessionsDone: 0,
@@ -82,7 +78,6 @@ function fresh(): State {
       added: t,
     })),
     daily: null,
-    usage: { inputTokens: 0, outputTokens: 0, costUsd: 0 },
   };
 }
 
@@ -96,7 +91,6 @@ function load(): State {
         ...base,
         ...parsed,
         settings: { ...base.settings, ...parsed.settings },
-        usage: { ...base.usage, ...parsed.usage },
       };
     }
   } catch {
@@ -233,9 +227,13 @@ export function learnedCount(): number {
   return state.expressions.filter((e) => e.box >= 3).length;
 }
 
-export function levelHint(): string {
-  const done = Object.keys(state.missions).length;
-  if (done < 3) return "absoluter Anfänger (A0). Sehr kurze, einfache Sätze, Präsens, häufigste Wörter.";
-  if (done < 7) return "Anfänger (A1). Kurze Sätze, Präsens und passé composé, Alltagswortschatz.";
-  return "Anfänger mit Grundlagen (A1–A2). Normale kurze Sätze, etwas mehr Umgangssprache.";
+
+/** True if `kw` occurs at the start of a word in `text` (accent-insensitive). */
+export function hasKeyword(text: string, kw: string): boolean {
+  const t = " " + norm(text).replace(/'/g, "' ") + " ";
+  const k = norm(kw).replace(/'/g, "' ");
+  if (!k) return false;
+  return t.includes(" " + k);
 }
+
+export { norm };
